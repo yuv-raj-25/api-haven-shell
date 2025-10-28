@@ -1,73 +1,65 @@
-# Welcome to your Lovable project
+# API Haven Shell
 
-## Project info
+API Haven Shell is a lightweight API exploration workspace built with Vite, React, Tailwind CSS, and shadcn/ui components. It provides a split-view layout with a request builder, response preview panel, and collection sidebar so you can prototype and document HTTP workflows quickly.
 
-**URL**: https://lovable.dev/projects/f521d6b0-9678-4238-b289-9ee9a618f3d1
+## Features
 
-## How can I edit this code?
+- Request workspace with method selection, URL entry, headers/body/auth tabs, and animated transitions
+- Response panel with tabbed output, copy-to-clipboard controls, and full-screen viewing for large payloads
+- Sidebar collections mock to showcase request organization patterns
+- Dark/light theme support through `next-themes`
 
-There are several ways of editing your application.
+## Prerequisites
 
-**Use Lovable**
+- Node.js 18+ (recommended to install via [nvm](https://github.com/nvm-sh/nvm))
+- npm 9+, pnpm 8+, or Bun 1.1+ (a `bun.lockb` file is included)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f521d6b0-9678-4238-b289-9ee9a618f3d1) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Getting Started
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clone the repository
+git clone https://github.com/yuv-raj-25/api-haven-shell.git
+cd api-haven-shell
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies (choose one)
+npm install
+# or
+pnpm install
+# or
+bun install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server (defaults to http://localhost:5173)
 npm run dev
+# pnpm dev
+# bun run dev
 ```
 
-**Edit a file directly in GitHub**
+## Usage
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Launch the dev server and open the app in your browser.
+2. Use the sidebar to browse the example collections.
+3. Compose requests within the workspace tabs (Params, Headers, Body, Auth).
+4. Inspect responses in the response panel; use **Full view** for an expanded payload viewer and **Copy** to capture JSON quickly.
 
-**Use GitHub Codespaces**
+> The current implementation uses mock data for request/response flows. Replace the request handlers with real networking logic (e.g., `fetch`, Axios) to connect to live APIs.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Scripts
 
-## What technologies are used for this project?
+- `dev` – Runs Vite in development mode with HMR.
+- `build` – Produces an optimized production build.
+- `preview` – Serves the production build locally for smoke testing.
 
-This project is built with:
+Scripts are available via npm, pnpm, or Bun according to your chosen package manager.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Project Structure
 
-## How can I deploy this project?
+```
+src/
+	components/     # Reusable UI building blocks (navbar, sidebar, response panel, request workspace)
+	hooks/          # Custom React hooks
+	lib/            # Utility helpers
+	pages/          # Route-level components
+	main.tsx        # Application entry point
+```
 
-Simply open [Lovable](https://lovable.dev/projects/f521d6b0-9678-4238-b289-9ee9a618f3d1) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Feel free to adapt this shell for your own API client by wiring in authentication, persistence, or external API integrations.
