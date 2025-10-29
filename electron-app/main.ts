@@ -44,7 +44,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "preload.cjs"),
+    //   devTools: true,
       devTools: !app.isPackaged,
     },
   });
@@ -54,7 +55,7 @@ function createWindow() {
   win.setMenu(null);
 
   // Open DevTools in detached mode for debuggin
-  //   win?.webContents.openDevTools({ mode: 'detach' });
+    // win?.webContents.openDevTools({ mode: 'detach' });
 
   // Load the app
   if (VITE_DEV_SERVER_URL) {

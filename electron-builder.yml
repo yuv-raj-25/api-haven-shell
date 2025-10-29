@@ -1,10 +1,10 @@
-appId: com.yuvrajchaudhary.apihaven              
-productName: Api Haven           
-copyright: Copyright © 2025 Api Haven Team  
+appId: com.yuvrajchaudhary.apihaven
+productName: Api Haven
+copyright: Copyright © 2025 Api Haven Team
 
-artifactName: api-haven-setup-${version}.${ext}  
+artifactName: api-haven-setup-${version}.${ext}
 directories:
-  output: release/build                     
+  output: release/build
 
 files:
   - dist/**/*
@@ -16,14 +16,14 @@ extraResources:
   - from: release/assets
     to: assets
     filter:
-      - '**/*'
+      - "**/*"
 
 # Windows-specific configuration
 win:
   target:
     - target: nsis
       arch:
-        - x64                              
+        - x64
   icon: release/assets/favicon.ico
 
 # NSIS installer configuration (Windows)
@@ -49,15 +49,14 @@ nsis:
 
 # macOS-specific configuration
 mac:
-  target: dmg                              
-  icon: release/assets/placeholder.svg            
-  category: public.app-category.business   
+  target: dmg
+  icon: release/assets/fevicon.ico
+  category: public.app-category.business
 
 # Linux-specific configuration
 linux:
   target:
-    - AppImage                             
-  icon: assets
+    - AppImage
+  icon: release/assets/favicon.ico
 
-
-forceCodeSigning: false                        
+forceCodeSigning: false
