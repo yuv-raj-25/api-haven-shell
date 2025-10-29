@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.node.json",
+  "compilerOptions": {
+    "outDir": "electron-app/dist",
+    "lib": ["ES2022"],
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": false,
+    "strict": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": false
+    // "rootDir": "./src/electron",
+    // "types": ["node"],
+    // "composite": true,
+    // "forceConsistentCasingInFileNames": true,
+    // "isolatedModules": false,
+    // "noImplicitAny": false
+  },
+  "include": ["electron-app/**/*"],
+  "exclude": ["node_modules", "dist", "electron-app/dist"]
+}
