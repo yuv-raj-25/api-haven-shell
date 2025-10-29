@@ -2,9 +2,11 @@ import { Settings, Moon, Sun, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
 
   return (
     <motion.nav
@@ -28,7 +30,9 @@ export const Navbar = () => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          onClick={() =>
+            setTheme(theme === "dark" ? "light" : "dark")
+          }
           className="h-9 w-9"
         >
           {theme === "dark" ? (
@@ -37,7 +41,12 @@ export const Navbar = () => {
             <Moon className="h-4 w-4" />
           )}
         </Button>
-        <Button variant="ghost" size="icon" className="h-9 w-9">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9"
+          onClick={() => navigate("/settings")}
+        >
           <Settings className="h-4 w-4" />
         </Button>
       </div>

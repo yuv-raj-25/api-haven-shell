@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Tabs,
@@ -7,42 +8,81 @@ import {
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { Loader2, Maximize2, Minimize2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import type { ExecutionResult } from "@/types/execution";
 
-export const ResponsePanel = () => {
-  const statusCode = 200;
-  const responseTime = 234;
-  const responseSize = 1.2;
+interface ResponsePanelProps {
+  response: ExecutionResult | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
+const formatSize = (bytes: number | undefined) => {
+  if (bytes === undefined || bytes === null) {
+    return "—";
+  }
+  if (!Number.isFinite(bytes)) {
+    return "—";
+  }
+  const value = bytes;
+  if (value <= 0) {
+    return "0 B";
+  }
+  if (value < 1024) {
+    return `${value} B`;
+  }
+  const kb = value / 1024;
+  if (kb < 1024) {
+    return `${kb.toFixed(2)} KB`;
+  }
+  const mb = kb / 1024;
+  return `${mb.toFixed(2)} MB`;
+};
+
+export const ResponsePanel = ({
+  response,
+  isLoading,
+  error,
+}: ResponsePanelProps) => {
   const { toast } = useToast();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const mockResponse = {
-    users: [
-      {
-        id: 1,
-        name: "John Doe",
-        email: "john@example.com",
-        role: "Admin",
-      },
-      {
-        id: 2,
-        name: "Jane Smith",
-        email: "jane@example.com",
-        role: "User",
-      },
-    ],
-    total: 2,
-    page: 1,
-  };
+  const bodyContent = useMemo(() => {
+    if (error) {
+      return error;
+    }
+    if (!response) {
+      return "Send a request to view the response body.";
+    }
+    if (!response.body) {
+      return "The response did not include a body.";
+    }
+    if (response.bodyFormat === "json") {
+      try {
+        const parsed = JSON.parse(response.body);
+        return JSON.stringify(parsed, null, 2);
+      } catch (parseError) {
+        console.warn("Failed to format JSON response", parseError);
+      }
+    }
+    return response.body;
+  }, [response, error]);
 
-  const formattedResponse = JSON.stringify(mockResponse, null, 2);
+  const copyPayload = response?.body ?? bodyContent ?? "";
+
+  const statusCode = response?.status ?? (error ? 0 : undefined);
+  const statusText =
+    response?.statusText ??
+    (error ? "Request Failed" : "No response yet");
+  const responseTime = response?.timeMs;
+  const responseSize = response?.size;
+  const headerEntries = response?.headers ?? [];
 
   const handleCopyBody = async () => {
     try {
-      await navigator.clipboard.writeText(formattedResponse);
+      await navigator.clipboard.writeText(copyPayload);
       toast({
         title: "Response body copied",
         description: "The JSON payload is ready to paste.",
@@ -103,17 +143,29 @@ export const ResponsePanel = () => {
           <h3 className="text-sm font-semibold">Response</h3>
           <div className="flex items-center gap-3 text-xs">
             <Badge
-              variant={statusCode === 200 ? "default" : "destructive"}
+              variant={
+                response?.ok
+                  ? "default"
+                  : error
+                  ? "destructive"
+                  : "secondary"
+              }
               className="font-mono"
             >
-              {statusCode} OK
+              {statusCode !== undefined
+                ? `${statusCode} ${statusText}`
+                : "No response"}
             </Badge>
             <span className="text-muted-foreground">
-              Time: {responseTime}ms
+              Time:{" "}
+              {responseTime !== undefined ? `${responseTime}ms` : "—"}
             </span>
             <span className="text-muted-foreground">
-              Size: {responseSize}KB
+              Size: {formatSize(responseSize)}
             </span>
+            {isLoading && (
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            )}
             <Button
               size="sm"
               variant="outline"
@@ -159,13 +211,14 @@ export const ResponsePanel = () => {
                   size="sm"
                   variant="outline"
                   onClick={handleCopyBody}
+                  disabled={!copyPayload || copyPayload.length === 0}
                 >
                   Copy
                 </Button>
               </div>
               <div className="h-full overflow-auto p-4 pt-14">
                 <pre className="min-w-full whitespace-pre font-mono text-sm text-foreground">
-                  {formattedResponse}
+                  {bodyContent}
                 </pre>
               </div>
             </TabsContent>
@@ -175,28 +228,29 @@ export const ResponsePanel = () => {
               className="mt-0 h-full overflow-hidden rounded-lg border border-border bg-code-bg"
             >
               <div className="h-full overflow-auto p-4">
-                <dl className="space-y-3 font-mono text-sm">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <dt className="text-primary font-semibold">
-                      Content-Type
-                    </dt>
-                    <dd className="text-foreground">
-                      application/json
-                    </dd>
+                {headerEntries.length > 0 ? (
+                  <dl className="space-y-3 font-mono text-sm">
+                    {headerEntries.map((header) => (
+                      <div
+                        key={header.key}
+                        className="flex flex-wrap items-center gap-3"
+                      >
+                        <dt className="text-primary font-semibold">
+                          {header.key}
+                        </dt>
+                        <dd className="text-foreground">
+                          {header.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : (
+                  <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                    {response
+                      ? "No headers returned"
+                      : "Send a request to inspect response headers."}
                   </div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <dt className="text-primary font-semibold">
-                      Content-Length
-                    </dt>
-                    <dd className="text-foreground">1245</dd>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <dt className="text-primary font-semibold">
-                      Server
-                    </dt>
-                    <dd className="text-foreground">nginx/1.18.0</dd>
-                  </div>
-                </dl>
+                )}
               </div>
             </TabsContent>
 
@@ -205,7 +259,7 @@ export const ResponsePanel = () => {
               className="mt-0 h-full overflow-hidden rounded-lg border border-border bg-code-bg"
             >
               <div className="flex h-full items-center justify-center p-4 text-sm text-muted-foreground">
-                No cookies in this response
+                Cookie parsing is not implemented yet.
               </div>
             </TabsContent>
           </div>
