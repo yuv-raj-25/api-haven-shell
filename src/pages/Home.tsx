@@ -4,6 +4,7 @@ import {
   Sparkles,
   Shield,
   CloudLightning,
+  Download,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -13,6 +14,26 @@ import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
+
+  const handleDownload = () => {
+    const platform = navigator.platform.toLowerCase();
+    const isMac = platform.includes("mac");
+    const isWindows = platform.includes("win");
+
+    // For now, we have a macOS build
+    if (isMac) {
+      window.location.href =
+        "/release/build/api-haven-setup-0.0.0.dmg";
+    } else if (isWindows) {
+      alert(
+        "Windows version coming soon! Use the web version for now."
+      );
+    } else {
+      alert(
+        "Linux version coming soon! Use the web version for now."
+      );
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -53,11 +74,75 @@ const Home = () => {
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => navigate("/settings")}
+                onClick={handleDownload}
               >
-                View Saved Requests
+                <Download className="mr-2 h-4 w-4" />
+                Download for Desktop
               </Button>
             </motion.div>
+          </div>
+        </section>
+
+        <section className="px-6 py-16">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-8 text-center">
+              <h2 className="text-3xl font-bold">Desktop & Web</h2>
+              <p className="mt-3 text-muted-foreground">
+                Choose your preferred way to work with API Haven
+              </p>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card className="border-border bg-card">
+                <CardContent className="flex flex-col gap-4 px-6 py-8">
+                  <Download className="h-10 w-10 text-primary" />
+                  <div>
+                    <h3 className="text-xl font-semibold">
+                      Desktop App
+                    </h3>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Native performance with offline support.
+                      Download the standalone application for macOS,
+                      Windows, or Linux.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleDownload}
+                    className="mt-2 w-full"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Now
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    Available for macOS (Apple Silicon & Intel)
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="border-border bg-card">
+                <CardContent className="flex flex-col gap-4 px-6 py-8">
+                  <CloudLightning className="h-10 w-10 text-primary" />
+                  <div>
+                    <h3 className="text-xl font-semibold">
+                      Web Version
+                    </h3>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Access from anywhere without installation.
+                      Perfect for quick testing and collaboration.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => navigate("/workspace")}
+                    variant="outline"
+                    className="mt-2 w-full"
+                  >
+                    Launch Web App
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    Works in all modern browsers
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </section>
 
