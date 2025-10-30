@@ -152,7 +152,9 @@ export const RequestWorkspace = ({
 
     if (typeof window !== "undefined") {
       try {
-        const stored = window.localStorage.getItem(LOCAL_STORAGE_SAVED_REQUEST_KEY);
+        const stored = window.localStorage.getItem(
+          LOCAL_STORAGE_SAVED_REQUEST_KEY
+        );
         if (stored) {
           const parsed = JSON.parse(stored) as {
             collectionId: string;
@@ -168,7 +170,10 @@ export const RequestWorkspace = ({
           }
         }
       } catch (storageError) {
-        console.warn("Failed to restore saved request snapshot", storageError);
+        console.warn(
+          "Failed to restore saved request snapshot",
+          storageError
+        );
       }
     }
 

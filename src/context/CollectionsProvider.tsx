@@ -120,6 +120,56 @@ export const CollectionsProvider = ({
     },
   });
 
+  const removeCollectionFromCache = useCallback(
+    (collectionId: string) => {
+      let filtered: Collection[] = [];
+      queryClient.setQueryData<Collection[]>(
+        COLLECTIONS_QUERY_KEY,
+        (prev = []) => {
+          filtered = prev.filter(
+            (collection) => collection.id !== collectionId
+          );
+          return filtered;
+        }
+      );
+      if (selectedCollectionId === collectionId) {
+        const fallback = filtered[0];
+        setSelectedCollectionId(fallback?.id ?? null);
+        setSelectedRequestId(fallback?.requests[0]?.id ?? null);
+      }
+    },
+    [queryClient, selectedCollectionId]
+  );
+
+  const removeRequestFromCache = useCallback(
+    (collectionId: string, requestId: string) => {
+      let updatedCollection: Collection | undefined;
+      queryClient.setQueryData<Collection[]>(
+        COLLECTIONS_QUERY_KEY,
+        (prev = []) =>
+          prev.map((collection) => {
+            if (collection.id !== collectionId) {
+              return collection;
+            }
+            const nextRequests = collection.requests.filter(
+              (request) => request.id !== requestId
+            );
+            updatedCollection = {
+              ...collection,
+              requests: nextRequests,
+            };
+            return updatedCollection;
+          })
+      );
+      if (selectedRequestId === requestId) {
+        setSelectedRequestId(
+          updatedCollection?.requests[0]?.id ?? null
+        );
+      }
+    },
+    [queryClient, selectedRequestId]
+  );
+
   const createCollectionMutation = useMutation({
     mutationFn: createCollectionRequest,
     onSuccess: (newCollection) => {
@@ -136,21 +186,7 @@ export const CollectionsProvider = ({
   const deleteCollectionMutation = useMutation({
     mutationFn: deleteCollectionRequest,
     onSuccess: (_, collectionId) => {
-      let filtered: Collection[] = [];
-      queryClient.setQueryData<Collection[]>(
-        COLLECTIONS_QUERY_KEY,
-        (prev = []) => {
-          filtered = prev.filter(
-            (collection) => collection.id !== collectionId
-          );
-          return filtered;
-        }
-      );
-      if (selectedCollectionId === collectionId) {
-        const fallback = filtered[0];
-        setSelectedCollectionId(fallback?.id ?? null);
-        setSelectedRequestId(fallback?.requests[0]?.id ?? null);
-      }
+      removeCollectionFromCache(collectionId);
     },
   });
 
@@ -219,29 +255,10 @@ export const CollectionsProvider = ({
       requestId: string;
     }) => deleteRequestRequest(collectionId, requestId),
     onSuccess: (_, variables) => {
-      let updatedCollection: Collection | undefined;
-      queryClient.setQueryData<Collection[]>(
-        COLLECTIONS_QUERY_KEY,
-        (prev = []) =>
-          prev.map((collection) => {
-            if (collection.id !== variables.collectionId) {
-              return collection;
-            }
-            const nextRequests = collection.requests.filter(
-              (request) => request.id !== variables.requestId
-            );
-            updatedCollection = {
-              ...collection,
-              requests: nextRequests,
-            };
-            return updatedCollection;
-          })
+      removeRequestFromCache(
+        variables.collectionId,
+        variables.requestId
       );
-      if (selectedRequestId === variables.requestId) {
-        setSelectedRequestId(
-          updatedCollection?.requests[0]?.id ?? null
-        );
-      }
     },
   });
 
@@ -289,9 +306,14 @@ export const CollectionsProvider = ({
 
   const deleteCollection = useCallback(
     async (collectionId: string) => {
-      await deleteCollectionMutation.mutateAsync(collectionId);
+      try {
+        await deleteCollectionMutation.mutateAsync(collectionId);
+      } catch (error) {
+        console.error("Failed to delete collection", error);
+        removeCollectionFromCache(collectionId);
+      }
     },
-    [deleteCollectionMutation]
+    [deleteCollectionMutation, removeCollectionFromCache]
   );
 
   const createRequest = useCallback(
@@ -325,20 +347,52 @@ export const CollectionsProvider = ({
         return updated;
       } catch (error) {
         console.error("Failed to update request", error);
-        return null;
+        let fallback: ApiRequest | null = null;
+        queryClient.setQueryData<Collection[]>(
+          COLLECTIONS_QUERY_KEY,
+          (prev = []) =>
+            prev.map((collection) => {
+              if (collection.id !== collectionId) {
+                return collection;
+              }
+              const nextRequests = collection.requests.map(
+                (request) => {
+                  if (request.id !== requestId) {
+                    return request;
+                  }
+                  fallback = {
+                    ...request,
+                    ...payload,
+                    body: payload.body ?? request.body ?? "",
+                  };
+                  return fallback;
+                }
+              );
+              return {
+                ...collection,
+                requests: nextRequests,
+              };
+            })
+        );
+        return fallback;
       }
     },
-    [updateRequestMutation]
+    [queryClient, updateRequestMutation]
   );
 
   const deleteRequest = useCallback(
     async (collectionId: string, requestId: string) => {
-      await deleteRequestMutation.mutateAsync({
-        collectionId,
-        requestId,
-      });
+      try {
+        await deleteRequestMutation.mutateAsync({
+          collectionId,
+          requestId,
+        });
+      } catch (error) {
+        console.error("Failed to delete request", error);
+        removeRequestFromCache(collectionId, requestId);
+      }
     },
-    [deleteRequestMutation]
+    [deleteRequestMutation, removeRequestFromCache]
   );
 
   const value = useMemo<CollectionsContextValue>(

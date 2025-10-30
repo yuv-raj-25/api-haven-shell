@@ -21,7 +21,8 @@ import { cn } from "@/lib/utils";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { collections, selectRequest } = useCollections();
+  const { collections, deleteRequest, selectRequest } =
+    useCollections();
 
   const savedRequests = useMemo(
     () =>
@@ -39,7 +40,14 @@ const Settings = () => {
     requestId: string
   ) => {
     selectRequest(collectionId, requestId);
-    navigate("/");
+    navigate("/workspace");
+  };
+
+  const handleDelete = async (
+    collectionId: string,
+    requestId: string
+  ) => {
+    await deleteRequest(collectionId, requestId);
   };
 
   return (
@@ -128,6 +136,18 @@ const Settings = () => {
                           >
                             Open in workspace
                           </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() =>
+                              void handleDelete(
+                                collection.id,
+                                request.id
+                              )
+                            }
+                          >
+                            Delete
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -145,19 +165,30 @@ const Settings = () => {
                   Workspace identity and account preferences.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6 text-sm text-muted-foreground">
-                <p>
-                  Profile management hooks into your authentication
-                  backend. Connect your user API to populate this
-                  section with editable details like name, email, and
-                  avatar.
-                </p>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-xs uppercase text-muted-foreground/70">
+                      Name
+                    </p>
+                    <p className="text-sm font-medium">
+                      Alex Johnson
+                    </p>
+                  </div>
+                  <Separator />
+                  <div>
+                    <p className="text-xs uppercase text-muted-foreground/70">
+                      Email
+                    </p>
+                    <p className="text-sm font-medium">
+                      alex.johnson@example.com
+                    </p>
+                  </div>
+                </div>
                 <Separator />
-                <p>
-                  Need a starting point? Expose a REST endpoint such
-                  as <code>/api/me</code> that returns your
-                  authenticated user data. You can then surface the
-                  response here using React Query.
+                <p className="text-xs text-muted-foreground">
+                  Replace these placeholders by wiring the profile tab
+                  to your authentication backend.
                 </p>
               </CardContent>
             </Card>
