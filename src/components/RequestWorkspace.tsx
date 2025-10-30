@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCollections } from "@/hooks/useCollections";
 import { useToast } from "@/hooks/use-toast";
 import type { HttpMethod, KeyValuePair } from "@/types/collections";
+import type { UpdateRequestInput } from "@/context/CollectionsContext";
 import type { ExecutionResult } from "@/types/execution";
 
 const httpMethods: HttpMethod[] = [
@@ -147,11 +148,45 @@ export const RequestWorkspace = ({
       return;
     }
 
-    setMethod(selectedRequest.method);
-    setUrl(selectedRequest.url ?? "");
-    setParams(normalizePairs(selectedRequest.params));
+    let payloadSource: UpdateRequestInput | null = null;
+
+    if (typeof window !== "undefined") {
+      try {
+        const stored = window.localStorage.getItem(LOCAL_STORAGE_SAVED_REQUEST_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored) as {
+            collectionId: string;
+            requestId: string;
+            payload: UpdateRequestInput;
+          };
+          if (
+            parsed.collectionId === selectedCollectionId &&
+            parsed.requestId === selectedRequest.id &&
+            parsed.payload
+          ) {
+            payloadSource = parsed.payload;
+          }
+        }
+      } catch (storageError) {
+        console.warn("Failed to restore saved request snapshot", storageError);
+      }
+    }
+
+    const effectivePayload = payloadSource ?? {
+      name: selectedRequest.name,
+      method: selectedRequest.method,
+      url: selectedRequest.url ?? "",
+      params: selectedRequest.params ?? [],
+      headers: selectedRequest.headers ?? [],
+      body: selectedRequest.body ?? "",
+      description: selectedRequest.description,
+    };
+
+    setMethod(effectivePayload.method);
+    setUrl(effectivePayload.url ?? "");
+    setParams(normalizePairs(effectivePayload.params));
     setHeaders(
-      normalizePairs(selectedRequest.headers, [
+      normalizePairs(effectivePayload.headers, [
         {
           id: createId(),
           key: "Content-Type",
@@ -160,8 +195,8 @@ export const RequestWorkspace = ({
         },
       ])
     );
-    setBody(selectedRequest.body ?? "");
-  }, [selectedRequestId, selectedRequest]);
+    setBody(effectivePayload.body ?? "");
+  }, [selectedRequestId, selectedRequest, selectedCollectionId]);
 
   const addParam = () => {
     setParams((prev) => [
