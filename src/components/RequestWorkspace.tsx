@@ -22,17 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { HttpMethod, KeyValuePair } from "@/types/collections";
 import type { UpdateRequestInput } from "@/context/CollectionsContext";
 import type { ExecutionResult } from "@/types/execution";
-
-const httpMethods: HttpMethod[] = [
-  "GET",
-  "POST",
-  "PUT",
-  "DELETE",
-  "PATCH",
-  "HEAD",
-  "OPTIONS",
-  "TRACE",
-];
+import { HTTP_METHODS } from "@/constants/http";
 
 const createId = () =>
   globalThis.crypto?.randomUUID?.() ??
@@ -78,8 +68,7 @@ interface RequestWorkspaceProps {
   onSendError?: (message: string) => void;
 }
 
-const LOCAL_STORAGE_SAVED_REQUEST_KEY =
-  "api-haven:last-saved-request";
+import { LOCAL_STORAGE_SAVED_REQUEST_KEY } from "@/constants/storage";
 
 export const RequestWorkspace = ({
   onSendStart,
@@ -483,7 +472,7 @@ export const RequestWorkspace = ({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {httpMethods.map((methodOption) => (
+              {HTTP_METHODS.map((methodOption) => (
                 <SelectItem
                   key={methodOption}
                   value={methodOption}

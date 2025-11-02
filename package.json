@@ -67,7 +67,12 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "react-markdown": "^8.0.7",
+    "remark-gfm": "^3.0.1",
+    "rehype-raw": "^6.1.1",
+    "rehype-highlight": "^6.0.0",
+    "highlight.js": "^11.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",

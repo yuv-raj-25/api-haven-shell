@@ -4,8 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { RequestWorkspace } from "@/components/RequestWorkspace";
 import { ResponsePanel } from "@/components/ResponsePanel";
 import type { ExecutionResult } from "@/types/execution";
-
-const LAST_RESPONSE_STORAGE_KEY = "api-haven:last-response";
+import { LAST_RESPONSE_STORAGE_KEY } from "@/constants/storage";
 
 const Index = () => {
   const [response, setResponse] = useState<ExecutionResult | null>(

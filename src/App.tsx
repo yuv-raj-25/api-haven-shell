@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Settings from "./pages/Settings.tsx";
 import Terms from "./pages/Terms";
+import DocsPage from "./pages/Docs";
 import { CollectionsProvider } from "@/context/CollectionsProvider";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/workspace" element={<Index />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/docs/:slug?" element={<DocsPage />} />
               <Route path="/terms" element={<Terms />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Star,
   Github,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
@@ -79,6 +80,14 @@ export const Navbar = () => {
         >
           <LayoutDashboard className="h-4 w-4" />
           Workspace
+        </Button>
+        <Button
+          variant="ghost"
+          className="gap-2"
+          onClick={() => navigate("/docs")}
+        >
+          <BookOpen className="h-4 w-4" />
+          Docs
         </Button>
         <Button
           variant="ghost"
