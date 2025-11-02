@@ -8,15 +8,15 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Light theme uses warm pale yellow (#ffebb4) */
-    /* Hex #ffebb4 ≈ HSL(44 100% 85%) */
-    --background: 44 100% 85%;
+    /* Light theme base color: #fffaeb */
+    /* Hex #fffaeb ≈ HSL(45 100% 96%) */
+    --background: 45 100% 96%;
     --foreground: 222 47% 11%;
 
-    --card: 44 100% 88%;
+    --card: 45 100% 96%;
     --card-foreground: 222 47% 11%;
 
-    --popover: 44 100% 88%;
+    --popover: 45 100% 96%;
     --popover-foreground: 222 47% 11%;
 
     --primary: 24 100% 61%;
@@ -25,8 +25,8 @@ All colors MUST be HSL.
     --secondary: 270 50% 40%;
     --secondary-foreground: 0 0% 100%;
 
-  --muted: 44 100% 92%;
-  --muted-foreground: 220 9% 46%;
+    --muted: 45 100% 96%;
+    --muted-foreground: 220 9% 46%;
 
     --accent: 24 95% 53%;
     --accent-foreground: 0 0% 100%;
@@ -39,12 +39,12 @@ All colors MUST be HSL.
     --ring: 24 100% 61%;
 
     --radius: 0.5rem;
-    
-    --code-bg: 44 100% 92%;
-    --sidebar-bg: 44 100% 85%;
+
+    --code-bg: 45 100% 96%;
+    --sidebar-bg: 45 100% 96%;
     --panel-border: 220 13% 91%;
 
-    --sidebar-background: 44 100% 86%;
+    --sidebar-background: 45 100% 96%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
 
@@ -78,8 +78,8 @@ All colors MUST be HSL.
     --secondary: 270 50% 40%;
     --secondary-foreground: 0 0% 100%;
 
-  --muted: 210 8% 22%;
-  --muted-foreground: 210 6% 70%;
+    --muted: 210 8% 22%;
+    --muted-foreground: 210 6% 70%;
 
     --accent: 24 95% 53%;
     --accent-foreground: 0 0% 100%;
@@ -114,8 +114,10 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
-  
-  code, pre, .font-mono {
-    font-family: 'Fira Code', 'Monaco', 'Courier New', monospace;
+
+  code,
+  pre,
+  .font-mono {
+    font-family: "Fira Code", "Monaco", "Courier New", monospace;
   }
 }
