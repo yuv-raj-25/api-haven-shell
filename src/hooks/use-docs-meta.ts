@@ -3,7 +3,9 @@ import { useEffect } from "react";
 export function useDocsMeta(topicTitle: string, topicDesc?: string) {
   useEffect(() => {
     const prevTitle = document.title;
-    const title = topicTitle ? `${topicTitle} — API Haven` : "API Haven";
+    const title = topicTitle
+      ? `${topicTitle} — API Haven`
+      : "API Haven";
     document.title = title;
 
     const setMeta = (name: string, content: string) => {
@@ -33,7 +35,9 @@ export function useDocsMeta(topicTitle: string, topicDesc?: string) {
     setProp("og:title", title);
     setMeta("twitter:title", title);
 
-    const canonical = document.querySelector("link[rel=canonical]") as HTMLLinkElement | null;
+    const canonical = document.querySelector(
+      "link[rel=canonical]"
+    ) as HTMLLinkElement | null;
     if (canonical) {
       canonical.href = window.location.href;
     } else {
