@@ -8,6 +8,7 @@ import rehypeHighlight from "rehype-highlight";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { toast } from "@/components/ui/use-toast";
+import { useDocsMeta } from "@/hooks/use-docs-meta";
 import { BookOpen, Search } from "lucide-react";
 
 import { TOPICS } from "@/constants/docs";
@@ -156,6 +157,10 @@ export default function DocsPage() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  // update document.title & meta tags for the current docs topic
+  const topicMeta = TOPICS.find((t) => t.slug === current);
+  useDocsMeta(topicMeta?.title ?? "API Haven", topicMeta?.desc);
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
@@ -288,3 +293,5 @@ export default function DocsPage() {
     </div>
   );
 }
+
+// head meta updates moved to `src/hooks/use-docs-meta.ts`
